@@ -4,13 +4,9 @@ const db = require('../models');
 
 module.exports = {
   get: (req, res) => {
-    models.Review.find({ room_id: Number(req.params.roomId) }, (err, reviews) => {
-      if (err) {
-        res.status(500).send(err);
-      } else {
-        res.status(200).send(reviews);
-      }
-    });
+    models.Review.find({ room_id: Number(req.params.roomId) })
+      .then(docs => res.status(200).send(docs))
+      .catch(err => res.status(500).send(err));
   },
   post: (req, res) => {
     const review = createReview(Number(req.params.roomId));
@@ -26,15 +22,19 @@ module.exports = {
       field,
       value,
     } = req.params;
-    models.Review.findOne({ room_id: roomId, user: reviewer })
-      .then((doc) => {
-        const updated = {};
-        updated[field] = value;
-        doc.set(updated);
-        doc.save()
-          .then(result => res.status(201).send(result))
-          .catch(err => res.status(500).send(err));
-      })
+    const set = { $set: { } };
+    set.$set[field] = value;
+    models.Review.update({ room_id: Number(roomId), user: reviewer }, set)
+      .then(doc => res.status(201).send(doc))
+      .catch(err => res.status(500).send(err));
+  },
+  delete: (req, res) => {
+    const {
+      roomId,
+      reviewer,
+    } = req.params;
+    models.Review.deleteOne({ room_id: Number(roomId), user: reviewer })
+      .then(docs => res.status(200).send(docs))
       .catch(err => res.status(500).send(err));
   },
 };
