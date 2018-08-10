@@ -30,3 +30,5 @@ CREATE TABLE reviews (
 \copy reviews (room_id, room_name, user_name, created_at, review_text, image_url, accuracy_rating, communication_rating, cleanliness_rating, location_rating, check_in_rating, value_rating, is_reported) FROM 'database/postgres/8mil.csv' DELIMITER ',';
 \copy reviews (room_id, room_name, user_name, created_at, review_text, image_url, accuracy_rating, communication_rating, cleanliness_rating, location_rating, check_in_rating, value_rating, is_reported) FROM 'database/postgres/9mil.csv' DELIMITER ',';
 \copy reviews (room_id, room_name, user_name, created_at, review_text, image_url, accuracy_rating, communication_rating, cleanliness_rating, location_rating, check_in_rating, value_rating, is_reported) FROM 'database/postgres/10mil.csv' DELIMITER ',';
+
+CREATE INDEX on reviews (room_id, room_name);
