@@ -1,76 +1,36 @@
-const mongoose = require('mongoose');
 const faker = require('faker');
-const db = require('./models');
+const fs = require('fs');
 
-class ReviewGenerator {
-  constructor() {
-    this.reviews = [];
-  }
-
-  createReviews() {
-    const years = [2016, 2017, 2018];
-    for (let i = 0; i < 100; i += 1) {
-      for (let j = 0; j < Math.floor(Math.random() * (76)); j += 1) {
-        const review = {};
-        review.room_id = i;
-        review.user = faker.name.findName();
-        review.created_at = `${faker.date.month()} ${years[Math.floor(Math.random() * (3))]}`;
-        review.review_text = faker.lorem.paragraph();
-        review.image_url = `https://s3-us-west-1.amazonaws.com/airfecuserimages/randPeopleImages/randPerson${Math.floor(Math.random() * (12)) + 1}.jpeg`;
-
-        review.accuracy_rating = faker.random.number({
-          min: 1,
-          max: 5,
-        });
-        review.communication_rating = faker.random.number({
-          min: 1,
-          max: 5,
-        });
-        review.cleanliness_rating = faker.random.number({
-          min: 1,
-          max: 5,
-        });
-        review.location_rating = faker.random.number({
-          min: 1,
-          max: 5,
-        });
-        review.check_in_rating = faker.random.number({
-          min: 1,
-          max: 5,
-        });
-        review.value_rating = faker.random.number({
-          min: 1,
-          max: 5,
-        });
-        review.is_reported = faker.random.boolean();
-        const reviewItem = new db.Review(review);
-        const temp = reviewItem.save();
-        this.reviews.push(temp);
-      }
+const createReviews = (names) => {
+  const years = [2016, 2017, 2018];
+  for (let i = 9750001; i < 10000001; i += 1) {
+    for (let j = 0; j < 1 + Math.floor(Math.random() * (30)); j += 1) {
+      const roomId = i;
+      const roomName = names[i - 1];
+      const user = faker.name.findName();
+      const createdAt = `${faker.date.month()} ${years[Math.floor(Math.random() * (3))]}`;
+      const reviewText = faker.lorem.paragraph();
+      const imageUrl = `https://s3-us-west-1.amazonaws.com/airdbprofilesphotos/${Math.ceil(Math.random() * (30))}.jpg`;
+      const accuracyRating = Math.floor(Math.random() * 6);
+      const communicationRating = Math.floor(Math.random() * 6);
+      const cleanlinessRating = Math.floor(Math.random() * 6);
+      const locationRating = Math.floor(Math.random() * 6);
+      const checkInRating = Math.floor(Math.random() * 6);
+      const valueRating = Math.floor(Math.random() * 6);
+      const isReported = faker.random.boolean();
+      console.log(`${roomId}, ${roomName}, ${user}, ${createdAt}, ${reviewText}, ${imageUrl}, ${accuracyRating}, ${communicationRating}, ${cleanlinessRating}, ${locationRating}, ${checkInRating}, ${valueRating}, ${isReported}`);
     }
-
-    // close connection to db
-    Promise.all(this.reviews)
-      .then((results) => {
-        console.log('sample item', results);
-        console.log(`${results.length} entrys saved in DataBase`);
-      })
-      .catch((err) => {
-        console.error(err);
-      })
-      .then(() => {
-        mongoose.connection.close(() => {
-          process.exit(0);
-        });
-      });
-    return this.reviews;
   }
-}
+};
 
-db.Review.remove({}).exec((err) => {
-  if (err) {
-    console.log(err);
-  }
-  const reviewGenerator = new ReviewGenerator();
-  const fakeReviews = reviewGenerator.createReviews();
-});
+const getNames = () => {
+  fs.readFile('./namesdata.csv', 'utf8', (err, data) => {
+    if (err) {
+      console.log(err);
+    } else {
+      createReviews(data.split('\n'));
+    }
+  });
+};
+
+getNames();
