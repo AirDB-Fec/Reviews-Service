@@ -22,11 +22,11 @@ class SingleReview extends React.Component {
     return (<div className="border">
       <div className="review-container">
         <div className="image-container">
-          <img className="user-image" src={this.props.review.image_url} alt="user" />
+          <img className="user-image" src={this.props.review.picture} alt="user" />
         </div>
         <div className="user-date-container">
           <div className="username">
-            {this.props.review.user}
+            {this.props.review.name}
           </div>
           <div>
             {this.props.review.created_at}
@@ -59,8 +59,8 @@ class SingleReview extends React.Component {
 
 SingleReview.propTypes = {
   review: PropTypes.shape({
-    image_url: PropTypes.string.isRequired,
-    user: PropTypes.string.isRequired,
+    picture: PropTypes.string.isRequired,
+    name: PropTypes.string.isRequired,
     created_at: PropTypes.string.isRequired,
     room_id: PropTypes.number.isRequired,
     review_text: PropTypes.string.isRequired,

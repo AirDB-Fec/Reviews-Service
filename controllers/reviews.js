@@ -1,12 +1,15 @@
-const models = require('../models');
 const createReview = require('./generator.js');
 const db = require('../models');
 
 module.exports = {
   get: (req, res) => {
-    models.Review.find({ room_id: Number(req.params.roomId) })
-      .then(docs => res.status(200).send(docs))
-      .catch(err => res.status(500).send(err));
+    db.getReviews(req.params.roomId, (err, data) => {
+      if (err) {
+        res.status(500).send(err);
+      } else {
+        res.status(200).send(data);
+      }
+    });
   },
   post: (req, res) => {
     const review = createReview(Number(req.params.roomId));

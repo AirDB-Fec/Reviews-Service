@@ -1,31 +1,27 @@
-const mongoose = require('mongoose');
+const { Pool } = require('pg');
 
-const dbURI = process.env.MONGODB_URI || 'mongodb://localhost/airfec-reviews';
+const cn = {
+  host: 'localhost',
+  port: 5432,
+  database: 'reviews_module',
+  user: 'arthurhovanesian',
+  password: '',
+};
+const pool = new Pool(cn);
 
-mongoose.connect(dbURI);
-
-mongoose.connection.on('connected', () => {
-  console.log(`Mongoose default connection open to ${dbURI}`);
-});
-
-// If the connection throws an error
-mongoose.connection.on('error', (err) => {
-  console.log(`Mongoose default connection error: ${err}`);
-});
-
-// When the connection is disconnected
-mongoose.connection.on('disconnected', () => {
-  console.log('Mongoose default connection disconnected');
-});
-
-// If the Node process ends, close the Mongoose connection
-process.on('SIGINT', () => {
-  mongoose.connection.close(() => {
-    console.log('Mongoose default connection disconnected through app termination');
-    process.exit(0);
-  });
-});
+const getReviews = (id, callback) => {
+  let query;
+  //const query = `SELECT * FROM reviews INNER JOIN listings ON (reviews.listing_id = listings.id) INNER JOIN users ON (reviews.user_id = users.id) WHERE listings.id = $1`;
+  if (isNaN(id)) {
+    query = `SELECT * FROM reviews INNER JOIN listings ON (reviews.listing_id = listings.id) INNER JOIN users ON (reviews.user_id = users.id) WHERE listings.id = (SELECT id FROM listings WHERE name = $1)`;
+  } else {
+    query = `SELECT * FROM reviews INNER JOIN listings ON (reviews.listing_id = listings.id) INNER JOIN users ON (reviews.user_id = users.id) WHERE listings.id = $1`;
+  }
+  pool.query(query, [id])
+    .then(res => callback(null, res.rows))
+    .catch(err => callback(err));
+};
 
 module.exports = {
-  Review: require('./Review'),
+  getReviews
 };
