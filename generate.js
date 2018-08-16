@@ -3,7 +3,7 @@ const fs = require('fs');
 
 const createReviews = (names) => {
   const years = [2016, 2017, 2018];
-  for (let i = 9750001; i < 10000001; i += 1) {
+  for (let i = 1; i < 11; i += 1) {
     for (let j = 0; j < 1 + Math.floor(Math.random() * (30)); j += 1) {
       const roomId = i;
       const roomName = names[i - 1];

@@ -8,8 +8,10 @@
     "node": ">=6.13.0"
   },
   "scripts": {
-    "db:names": "time node --max-old-space-size=16000 generateNames.js | gzip -c > namesdata.csv.gz",
-    "db:generate": "time node --max-old-space-size=14336 generate.js | gzip -c > reviews.csv.gz",
+    "db:users": "time node --max-old-space-size=16000 generateUsers.js | gzip -c > users.csv.gz",
+    "db:names": "time node --max-old-space-size=16000 generateNames.js | gzip -c > names.csv.gz",
+    "db:genPostgres": "time node --max-old-space-size=14336 generate.js | gzip -c > reviews.csv.gz",
+    "db:reviews": "time node --max-old-space-size=14336 generateReviews.js | gzip -c > reviews.csv.gz",
     "start": "nodemon server/index.js",
     "react-dev": "webpack -d --watch",
     "test": "jest --forceExit",
