@@ -1,40 +1,64 @@
-const models = require('../models');
 const createReview = require('./generator.js');
 const db = require('../models');
 
 module.exports = {
   get: (req, res) => {
-    models.Review.find({ room_id: Number(req.params.roomId) })
-      .then(docs => res.status(200).send(docs))
-      .catch(err => res.status(500).send(err));
+    db.getReviews(req.params.roomId, (err, data) => {
+      if (err) {
+        res.status(500).send(err);
+      } else {
+        res.status(200).send(data);
+      }
+    });
   },
   post: (req, res) => {
-    const review = createReview(Number(req.params.roomId));
-    const reviewItem = new db.Review(review);
-    reviewItem.save()
-      .then(() => res.status(201).send())
-      .catch(err => res.status(500).send(err));
+    db.postReview(req.params.roomId, (err) => {
+      if (err) {
+        res.status(500).send(err);
+      } else {
+        res.status(200).send();
+      }
+    });
   },
   put: (req, res) => {
-    const {
-      roomId,
-      reviewer,
-      field,
-      value,
-    } = req.params;
-    const set = { $set: { } };
-    set.$set[field] = value;
-    models.Review.update({ room_id: Number(roomId), user: reviewer }, set)
-      .then(doc => res.status(201).send(doc))
-      .catch(err => res.status(500).send(err));
+    db.updateReview(req.params, (err, data) => {
+      if (err) {
+        res.status(500).send(err);
+      } else {
+        res.status(200).send(data);
+      }
+    });
   },
   delete: (req, res) => {
-    const {
-      roomId,
-      reviewer,
-    } = req.params;
-    models.Review.deleteOne({ room_id: Number(roomId), user: reviewer })
-      .then(docs => res.status(200).send(docs))
-      .catch(err => res.status(500).send(err));
+    db.deleteReview(req.params, (err, data) => {
+      if (err) {
+        res.status(500).send(err);
+      } else {
+        res.status(200).send(data);
+      }
+    });
   },
+
+  // put: (req, res) => {
+  //   const {
+  //     roomId,
+  //     reviewer,
+  //     field,
+  //     value,
+  //   } = req.params;
+  //   const set = { $set: { } };
+  //   set.$set[field] = value;
+  //   models.Review.update({ room_id: Number(roomId), user: reviewer }, set)
+  //     .then(doc => res.status(201).send(doc))
+  //     .catch(err => res.status(500).send(err));
+  // },
+  // delete: (req, res) => {
+  //   const {
+  //     roomId,
+  //     reviewer,
+  //   } = req.params;
+  //   models.Review.deleteOne({ room_id: Number(roomId), user: reviewer })
+  //     .then(docs => res.status(200).send(docs))
+  //     .catch(err => res.status(500).send(err));
+  // },
 };
